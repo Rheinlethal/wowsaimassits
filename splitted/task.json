@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run 5 Scripts",
+            "type": "shell",
+            "command": "python ${workspaceFolder}/script1.py & python ${workspaceFolder}/script2.py & python ${workspaceFolder}/script3.py & python ${workspaceFolder}/script4.py & python ${workspaceFolder}/script5.py & wait",
+            "problemMatcher": []
+        }
+    ]
+}

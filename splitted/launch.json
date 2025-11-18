@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Script 1",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script1.py"
+        },
+        {
+            "name": "Script 2",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script2.py"
+        },
+        {
+            "name": "Script 3",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script3.py"
+        },
+        {
+            "name": "Script 4",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script4.py"
+        },
+        {
+            "name": "Script 5",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/script5.py"
+        }
+    ]
+}
