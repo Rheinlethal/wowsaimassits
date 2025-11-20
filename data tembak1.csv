@@ -1,0 +1,13 @@
+nomer tembakan,Jarak ke target (km),Kecepatan kapal target (knot),sudut antara garis pandang dan heading target.,Kecepatan peluru,Reticle lead yang kamu pakai (unit),Dimana peluru mendarat_batas kiri (unit),Dimana peluru mendarat_batas kanan (unit),Hit or miss,sudut antara garis pandang dan heading ketika peluru mendarat
+1,13.3,34,6,880,0,-5,-10,miss,30
+2,10.6,34,27,880,-20,-19,-39,miss,26
+3,5.6,34.5,42,880,-30,-30,-40,hit,46
+4,6.6,34.5,38,880,-20,-25,-32,miss ,40
+5,5,34.5,44,880,-20,-38,-25,hit,46
+6,5.7,34.5,80,880,-20,-20,-28,hit,97
+7,5.7,34.5,116,880,-20,-20,-28,hit,122
+8,5.3,34,-70,880,-20,20,30,hit,-75
+9,5,34,-79,880,20,20,28,hit,-81
+10,4,25,34,880,-20,19,26,hit,36
+11,15.5,32.5,34,880,-20,-20,-20,miss,59
+12,14.3,32.5,66,880,-20,-20,-25,hit,70
