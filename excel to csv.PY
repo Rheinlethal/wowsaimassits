@@ -14,7 +14,7 @@ def excel_to_csv(input_file):
         
         # bikin nama csv dari nama sheet
         safe_sheet = sheet_name.replace(" ", "_")  # type: ignore # biar ga ribut kalau ada spasi
-        output_file = f"{base_name}_{safe_sheet}.csv"
+        output_file = f"{base_name}_{safe_sheet}_DATA_.csv"
         
         # export
         df.to_csv(output_file, index=False, encoding="utf-8")

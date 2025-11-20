@@ -6,7 +6,7 @@ import numpy as np
 # 1. BACA CSV
 # ============================
 
-df = pd.read_csv("data tembak1_Sheet1.csv")
+df = pd.read_csv("data tembak1_Sheet1_DATA_.csv")
 
 # ============================
 # 2. AMBIL KOLOM FITUR & TARGET
