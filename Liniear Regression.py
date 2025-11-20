@@ -6,14 +6,14 @@ import numpy as np
 # 1. BACA CSV
 # ============================
 
-df = pd.read_csv("data tembak1_Sheet1_DATA_.csv")
+df = pd.read_csv("data velocity_Sheet1_DATA_.csv")
 
 # ============================
 # 2. AMBIL KOLOM FITUR & TARGET
 # ============================
 
-x = df[['distance','enemy_speed','angle','shell_velocity','maximum_dispersion']].to_numpy()
-z = df['impact_offset_x'].to_numpy()
+x = df[['range_value','velocity']].to_numpy()
+z = df['time'].to_numpy()
 
 # ============================
 # 3. TRAIN MODEL
@@ -27,5 +27,5 @@ model.fit(x,z)
 # ============================
 
 print("=== HASIL RUMUS ===")
-print("Coefficient (coef):", model.coef_)
-print("Intercept:", model.intercept_)
+print("Coefficient=", model.coef_)
+print("Intercept=", model.intercept_)
