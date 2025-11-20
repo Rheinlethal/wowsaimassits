@@ -1,0 +1,16 @@
+
+a=0.33105631
+b=0.12402003
+c=0.03678158
+d=0.00987579
+e=-0.01119235
+f= -12.523742569643106
+
+distance=20
+enemy_speed=33
+angle=60
+shell_velocity=880
+maximum_dispersion=210
+
+lead=(a*distance)+(b*enemy_speed)+(c*angle)+(d*shell_velocity)+(e*maximum_dispersion)+(f)
+print(lead)
