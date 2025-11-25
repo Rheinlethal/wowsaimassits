@@ -1,0 +1,6 @@
+{
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.enableTroubleshootMissingImports": false,
+    "python.analysis.importFormat": "relative"
+}
