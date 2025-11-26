@@ -22,7 +22,7 @@ Masukkan input seperti:
 * jarak musuh
 * angle
 * shell travel time
-  dan GUI akan menampilkan **prediksi offset_x**.
+* dan GUI akan menampilkan **prediksi offset_x**.
 
 Angka ini nanti dipakai sebagai patokan untuk mengarahkan tembakan di binocular.
 
