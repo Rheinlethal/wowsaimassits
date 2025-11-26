@@ -4,10 +4,10 @@ from sklearn.ensemble import RandomForestRegressor
 import joblib
 
 # ===== LOAD DATASET =====
-df = pd.read_csv("raw_data.csv")
+df = pd.read_csv("excel datasets tembakan_new_data_nambah actual speed_.csv")
 
 # ===== SPLIT FITUR & TARGET =====
-X = df[["shell_travel_time", "distance", "angle", "max_enemy_speed"]]
+X = df[["shell_travel_time", "distance", "angle", "enemy_actual_speed"]]
 y = df["offset_x"]
 
 # ===== SPLIT TRAIN & TEST =====
@@ -22,4 +22,4 @@ model.fit(X_train, y_train)
 # ===== SAVE MODEL =====
 joblib.dump(model, "offset_model.pkl")
 
-print("Model udah kelar dilatih & disimpen jadi offset_model.pkl ✨")
+print("Model udah kelar dilatih & disimpen jadi offset_model.pkl")

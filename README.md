@@ -1,1 +1,1 @@
-belum ada ide nulis
+jadi gini, ini code calculator aim aja
