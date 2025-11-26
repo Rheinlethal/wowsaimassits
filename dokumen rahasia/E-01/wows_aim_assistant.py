@@ -120,7 +120,7 @@ class WoWSAimAssist:
         # Train Random Forest
         print("\nTraining Random Forest model...")
         self.model = RandomForestRegressor(
-            n_estimators=200,
+            n_estimators=300,
             max_depth=15,
             min_samples_split=5,
             min_samples_leaf=2,

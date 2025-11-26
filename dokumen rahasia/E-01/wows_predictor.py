@@ -35,27 +35,27 @@ class WoWSAimPredictor:
             return False
         
     def predict(self, distance, angle, shell_travel_time, enemy_max_speed):
-        """
-        Prediksi offset_x untuk aim assist
+        # """
+        # Prediksi offset_x untuk aim assist
         
-        Parameters:
-        -----------
-        distance : float
-            Jarak ke musuh (km)
-        angle : float
-            Sudut antara aim dan arah gerak musuh (derajat, 0-90)
-        shell_travel_time : float
-            Waktu tempuh peluru (detik)
-        enemy_max_speed : float
-            Max speed musuh (knots)
+        # Parameters:
+        # -----------
+        # distance : float
+        #     Jarak ke musuh (km)
+        # angle : float
+        #     Sudut antara aim dan arah gerak musuh (derajat, 0-90)
+        # shell_travel_time : float
+        #     Waktu tempuh peluru (detik)
+        # enemy_max_speed : float
+        #     Max speed musuh (knots)
             
-        Returns:
-        --------
-        offset_x : float
-            Offset dalam satuan garis binocular
-        actual_speed : float
-            Estimasi actual speed musuh
-        """
+        # Returns:
+        # --------
+        # offset_x : float
+        #     Offset dalam satuan garis binocular
+        # actual_speed : float
+        #     Estimasi actual speed musuh
+        # """
         # Hitung actual speed
         actual_speed = enemy_max_speed * self.speed_ratio
         
@@ -82,8 +82,17 @@ class WoWSAimPredictor:
             cos_angle           # 7
         ]])
         
-        # Scale dan predict
-        features_scaled = self.scaler.transform(features)
+        # Scale dan predict (safeguard if scaler/model not loaded)
+        if self.scaler is not None:
+            features_scaled = self.scaler.transform(features)
+        else:
+            # scaler tidak tersedia; gunakan fitur mentah dan beri peringatan
+            print("⚠️  Warning: scaler not loaded, using raw features for prediction.")
+            features_scaled = features
+
+        if self.model is None:
+            raise RuntimeError("Model not loaded. Call 'load_model' before predict().")
+
         offset_x = self.model.predict(features_scaled)[0]
         
         return offset_x, actual_speed
