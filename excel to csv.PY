@@ -21,4 +21,4 @@ def excel_to_csv(input_file):
         print(f"Saved: {output_file}")
 
 # contoh pemakaian
-excel_to_csv("data tembak2.xlsx")
+excel_to_csv("excel datasets tembakan.xlsx")

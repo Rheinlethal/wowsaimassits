@@ -6,43 +6,54 @@ from sklearn.metrics import mean_absolute_error, r2_score
 import joblib
 
 """
-Script untuk mengoreksi enemy_speed dari max_speed ke actual_speed
-Input: CSV dengan kolom shell_travel_time, distance, angle, enemy_speed, offset_x
-Output: CSV dengan kolom tambahan actual_speed dan speed_fraction
+Script 1: Koreksi Enemy Speed
+Tujuan: Mengoreksi nilai enemy_speed yang salah/tidak akurat menjadi actual_speed yang benar
+Input: data_tembakan.csv dengan enemy_speed yang mungkin salah
+Output: data_tembakan_corrected.csv dengan actual_speed yang sudah dikoreksi
 """
 
 # Load data
-print("Loading data...")
-df = pd.read_csv('data_tembakan.csv')
+print("=" * 60)
+print("SCRIPT 1: KOREKSI ENEMY SPEED")
+print("=" * 60)
+print("\nLoading data...")
+df = pd.read_csv('data tembak2_new_data_DATA_.csv')
 
 print(f"Total data: {len(df)} rows")
-print("\nContoh data:")
+print("\nContoh data original:")
 print(df.head())
+print("\nStatistik enemy_speed original:")
+print(df['enemy_speed'].describe())
 
-# Feature engineering untuk mencari actual speed
-# Logika: offset_x = actual_speed * shell_travel_time * sin(angle) * correction_factor
-# Kita bisa estimasi speed_fraction = actual_speed / max_speed
+# Feature engineering
+print("\n" + "=" * 60)
+print("PROSES KOREKSI ACTUAL SPEED")
+print("=" * 60)
 
-print("\n=== Menghitung Speed Fraction ===")
-
-# Konversi angle ke radian
+# Konversi angle ke radian untuk perhitungan
 df['angle_rad'] = np.deg2rad(df['angle'])
+df['sin_angle'] = np.sin(df['angle_rad'])
 
-# Estimasi awal speed fraction berdasarkan offset_x
-# offset_x ≈ actual_speed * shell_travel_time * sin(angle) / distance_factor
-df['estimated_speed_fraction'] = df['offset_x'] / (
-    df['enemy_speed'] * df['shell_travel_time'] * np.sin(df['angle_rad']) + 0.001
-)
+# Logika: offset_x berbanding lurus dengan actual_speed * shell_travel_time * sin(angle)
+# Kita gunakan ini untuk estimasi awal actual_speed
+# Formula: actual_speed ≈ offset_x / (shell_travel_time * sin(angle) * distance_factor)
 
-# Normalisasi ke range 0-1
-df['estimated_speed_fraction'] = df['estimated_speed_fraction'].clip(0.1, 1.0)
+# Estimasi awal actual speed berdasarkan physics-like relationship
+distance_factor = df['distance'] / 10000  # Normalisasi distance
+denominator = df['shell_travel_time'] * df['sin_angle'] * distance_factor
+denominator = denominator.replace(0, 0.001)  # Hindari division by zero
 
-print("Distribusi estimasi speed fraction:")
-print(df['estimated_speed_fraction'].describe())
+df['estimated_actual_speed'] = df['offset_x'] / denominator
+df['estimated_actual_speed'] = df['estimated_actual_speed'].clip(5, 50)  # Batas realistis
 
-# Prepare features untuk training
-features = ['shell_travel_time', 'distance', 'angle', 'enemy_speed', 'offset_x']
-target = 'estimated_speed_fraction'
+print("\nEstimasi awal actual_speed:")
+print(df['estimated_actual_speed'].describe())
+
+# Prepare features untuk Random Forest
+# Features yang bisa membantu prediksi actual speed
+features = ['shell_travel_time', 'distance', 'angle', 'sin_angle', 
+            'enemy_speed', 'offset_x']
+target = 'estimated_actual_speed'
 
 X = df[features]
 y = df[target]
@@ -52,8 +63,8 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# Train Random Forest model
-print("\n=== Training Random Forest Regressor ===")
+# Train Random Forest untuk refine estimasi actual speed
+print("\nTraining Random Forest Regressor...")
 rf_model = RandomForestRegressor(
     n_estimators=200,
     max_depth=20,
@@ -69,59 +80,84 @@ rf_model.fit(X_train, y_train)
 y_pred_train = rf_model.predict(X_train)
 y_pred_test = rf_model.predict(X_test)
 
-print(f"\nTrain MAE: {mean_absolute_error(y_train, y_pred_train):.4f}")
-print(f"Test MAE: {mean_absolute_error(y_test, y_pred_test):.4f}")
-print(f"Train R²: {r2_score(y_train, y_pred_train):.4f}")
-print(f"Test R²: {r2_score(y_test, y_pred_test):.4f}")
+print(f"\nPerforma Model:")
+print(f"  Train MAE: {mean_absolute_error(y_train, y_pred_train):.4f} knots")
+print(f"  Test MAE: {mean_absolute_error(y_test, y_pred_test):.4f} knots")
+print(f"  Train R²: {r2_score(y_train, y_pred_train):.4f}")
+print(f"  Test R²: {r2_score(y_test, y_pred_test):.4f}")
 
 # Feature importance
 print("\nFeature Importance:")
-for feature, importance in zip(features, rf_model.feature_importances_):
-    print(f"{feature}: {importance:.4f}")
+for feature, importance in sorted(zip(features, rf_model.feature_importances_), 
+                                 key=lambda x: x[1], reverse=True):
+    print(f"  {feature}: {importance:.4f}")
 
-# Predict speed fraction untuk semua data
-df['speed_fraction'] = rf_model.predict(df[features])
-df['speed_fraction'] = df['speed_fraction'].clip(0.1, 1.0)  # Batasi range
+# Predict actual speed untuk semua data
+df['actual_speed'] = rf_model.predict(df[features])
 
-# Hitung actual speed
-df['actual_speed'] = df['enemy_speed'] * df['speed_fraction']
+# PENTING: actual_speed tidak boleh melebihi enemy_speed (max speed)
+# Clip antara 5 knots (minimum realistis) dan enemy_speed (max speed)
+df['actual_speed'] = df.apply(
+    lambda row: min(max(row['actual_speed'], 5), row['enemy_speed']), 
+    axis=1
+).round(2)
 
-# Kategorisasi speed
-def categorize_speed(fraction):
-    if fraction >= 0.875:
-        return 'full_speed'
-    elif fraction >= 0.625:
-        return '3/4_speed'
-    elif fraction >= 0.375:
-        return '1/2_speed'
-    else:
-        return '1/4_speed'
+# Analisis koreksi
+df['speed_difference'] = (df['actual_speed'] - df['enemy_speed']).round(2)
+df['speed_fraction'] = (df['actual_speed'] / df['enemy_speed']).round(3)
+df['speed_error_pct'] = ((df['speed_difference'] / df['enemy_speed']) * 100).round(2)
 
-df['speed_category'] = df['speed_fraction'].apply(categorize_speed)
-
-# Tampilkan statistik
-print("\n=== Hasil Koreksi ===")
-print("\nDistribusi Speed Fraction:")
+print("\n" + "=" * 60)
+print("HASIL KOREKSI")
+print("=" * 60)
+print("\nStatistik Actual Speed (setelah koreksi):")
+print(df['actual_speed'].describe())
+print("\nStatistik Speed Fraction (actual/max):")
 print(df['speed_fraction'].describe())
-print("\nDistribusi Speed Category:")
-print(df['speed_category'].value_counts())
+print("\nPerbedaan Enemy Speed vs Actual Speed:")
+print(df['speed_difference'].describe())
+print("\nPersentase Error:")
+print(df['speed_error_pct'].describe())
+
+# Validasi: actual_speed tidak boleh > enemy_speed
+invalid_count = (df['actual_speed'] > df['enemy_speed']).sum()
+if invalid_count > 0:
+    print(f"\n⚠️  Warning: {invalid_count} data memiliki actual_speed > enemy_speed")
+    print("    (sudah dikoreksi ke enemy_speed)")
+else:
+    print("\n✓ Validasi OK: Semua actual_speed <= enemy_speed")
+
+# Tampilkan contoh koreksi
+print("\n" + "=" * 60)
+print("CONTOH HASIL KOREKSI")
+print("=" * 60)
+comparison_cols = ['distance', 'angle', 'enemy_speed', 'actual_speed', 
+                   'speed_fraction', 'speed_difference', 'offset_x']
+print(df[comparison_cols].head(15).to_string(index=False))
+
+# Prepare output file (hanya kolom yang diperlukan)
+output_cols = ['shell_travel_time', 'distance', 'angle', 'enemy_speed', 
+               'actual_speed', 'offset_x']
+df_output = df[output_cols].copy()
 
 # Simpan hasil
 output_file = 'data_tembakan_corrected.csv'
-df.to_csv(output_file, index=False)
-print(f"\n✓ Data yang sudah dikoreksi disimpan ke: {output_file}")
+df_output.to_csv(output_file, index=False)
+
+print("\n" + "=" * 60)
+print("✓ DATA YANG SUDAH DIKOREKSI DISIMPAN")
+print("=" * 60)
+print(f"File: {output_file}")
+print(f"Kolom: {', '.join(output_cols)}")
+print(f"Total rows: {len(df_output)}")
 
 # Simpan model
 model_file = 'speed_correction_model.pkl'
 joblib.dump(rf_model, model_file)
-print(f"✓ Model disimpan ke: {model_file}")
+print(f"\n✓ MODEL DISIMPAN: {model_file}")
 
-# Tampilkan contoh hasil
-print("\n=== Contoh Hasil Koreksi ===")
-sample_cols = ['distance', 'angle', 'enemy_speed', 'actual_speed', 
-               'speed_fraction', 'speed_category', 'offset_x']
-print(df[sample_cols].head(10).to_string())
-
-print("\n=== Selesai! ===")
-print(f"File output: {output_file}")
-print("Gunakan file ini untuk script prediksi offset_x")
+print("\n" + "=" * 60)
+print("SELESAI!")
+print("=" * 60)
+print("Selanjutnya: Jalankan Script 2 untuk prediksi offset_x")
+print(f"File input untuk Script 2: {output_file}")
