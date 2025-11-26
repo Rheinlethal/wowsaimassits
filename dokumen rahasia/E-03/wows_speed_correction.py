@@ -17,7 +17,7 @@ print("=" * 60)
 print("SCRIPT 1: KOREKSI ENEMY SPEED")
 print("=" * 60)
 print("\nLoading data...")
-df = pd.read_csv('data tembak2_new_data_DATA_.csv')
+df = pd.read_csv('excel datasets tembakan_new_data_DATA_.csv')
 
 print(f"Total data: {len(df)} rows")
 print("\nContoh data original:")

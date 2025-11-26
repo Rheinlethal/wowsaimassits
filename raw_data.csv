@@ -1,4 +1,4 @@
-shell_time_travel,distance,angel,enemy_speed,offset_x
+shell_travel_time,distance,angle,max_enemy_speed,offset_x
 8.65,13550.0,74,21.0,3.5
 4.6,8380.0,86,30.0,2.5
 8.54,13350.0,16,23.0,1.8
