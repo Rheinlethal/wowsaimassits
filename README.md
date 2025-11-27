@@ -11,7 +11,7 @@ Prediksi ini dipakai khusus dynamic crosshair seperti **Nomogram Classic Top Web
 
 ### 1️⃣ **Siapkan Dataset**
 
-Gunakan file **`data_tembak.csv`** sebagai dataset utama.
+Gunakan file **`data_tembak.csv`** sebagai dataset utama. lalu jalankan **Random Forest Regression model train.py**
 Model akan dilatih menggunakan data ini dan menghasilkan file model **`offset_predictor.pkl`**.
 
 ### 2️⃣ **Tes Menggunakan GUI**
@@ -22,7 +22,7 @@ Masukkan input seperti:
 * jarak musuh
 * angle
 * shell travel time
-  dan GUI akan menampilkan **prediksi offset_x**.
+* dan GUI akan menampilkan **prediksi offset_x**.
 
 Angka ini nanti dipakai sebagai patokan untuk mengarahkan tembakan di binocular.
 
