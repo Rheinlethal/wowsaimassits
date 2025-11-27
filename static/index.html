@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WoWS Offset X Predictor</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚓ World of Warships</h1>
+            <h2>Offset X Predictor</h2>
+            <p class="subtitle">AI-powered aim assistant for binocular crosshair offset prediction</p>
+        </div>
+
+        <div class="card">
+            <form id="predictForm">
+                <div class="form-group">
+                    <label for="shellTravelTime">
+                        <span class="label-icon">🕐</span>
+                        Shell Travel Time (seconds)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="shellTravelTime" 
+                        name="shell_travel_time" 
+                        step="0.01" 
+                        placeholder="e.g., 8.5" 
+                        required
+                    >
+                    <small>Time for shell to reach target</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="distance">
+                        <span class="label-icon">📏</span>
+                        Distance (km)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="distance" 
+                        name="distance" 
+                        step="0.1" 
+                        placeholder="e.g., 15.2" 
+                        required
+                    >
+                    <small>Distance to enemy ship</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="angle">
+                        <span class="label-icon">📐</span>
+                        Angle (degrees)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="angle" 
+                        name="angle" 
+                        step="0.1" 
+                        placeholder="e.g., 45" 
+                        required
+                    >
+                    <small>Angle between aim and enemy movement direction</small>
+                </div>
+
+                <button type="submit" class="predict-btn">
+                    <span class="btn-icon">🎯</span>
+                    Calculate Offset
+                </button>
+            </form>
+
+            <div id="result" class="result hidden">
+                <div class="result-header">Prediction Result</div>
+                <div class="result-value">
+                    <span class="result-label">Offset X:</span>
+                    <span id="offsetValue" class="offset-value">-</span>
+                </div>
+                <div class="result-info">
+                    Use this value with Nomogram Classic Top Web crosshair
+                </div>
+            </div>
+
+            <div id="error" class="error hidden"></div>
+        </div>
+
+        <div class="info-card">
+            <h3>ℹ️ How to Use</h3>
+            <ol>
+                <li>Enter the <strong>shell travel time</strong> shown in your binocular view</li>
+                <li>Input the <strong>distance</strong> to the enemy ship in kilometers</li>
+                <li>Measure the <strong>angle</strong> between your aim direction and enemy movement</li>
+                <li>Click "Calculate Offset" to get your horizontal offset prediction</li>
+                <li>Apply the offset value to your <strong>Nomogram Classic Top Web</strong> crosshair</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <p>Model trained with Random Forest Regression for consistent aim assistance</p>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
